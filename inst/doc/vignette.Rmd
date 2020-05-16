@@ -1,0 +1,193 @@
+---
+title: 'SubtypeDrug: Prioritization of Candidate Cancer Subtype-specific Drugs'
+author: "Xudong Han<br/>Junwei Han<br/>Chonghui Liu"
+date: "`r Sys.Date()`"
+bibliography: references.bib
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: |
+  %\VignetteIndexEntry{SubtypeDrug: Prioritization of Candidate Cancer Subtype-specific Drugs} 
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(SubtypeDrug)
+```
+
+## Introduction
+The **SubtypeDrug** package is a systematic biological tool to optimize cancer subtype-specific drugs. The main capabilities of this tool are as follows:<br/>
+  
+    1. Extracting subpathways and drug subpathway association data. We use a topology-based analysis method to mine connected subpathways from the canonical biological pathways of the KEGG database. Next, integrating drug-induced transcriptome data in human cell lines with these subpathways construct drug subpathway association data.
+    
+    2. Inferring subpathway activity profile. The program provides two methods GSVA and ssGSEA to convert the gene expression profile into the subpathway activity profile.
+    
+    3. Estimating a normalized drug-disease reverse association score. In the subpathway activity profile, we quantify the individualized subpathway aberrance score by comparing it with accumulated normal samples. Then, we use pattern recognition to reversely associate the drug up-regulatory and down-regulatory subpathway with the ranked list of the subpathways of each sample. The inverse correlation strength score of each drug in each sample is normalized as the normalized drug-disease reverse association score.
+    
+    4. Identification of cancer subtype-specific drugs. Taking the sutype-specific drug score (SDS) of each cancer subtype as a parameter, the significant cancer subtype-specific drugs are identified through sample perturbation.
+    
+    5. Visual display of results content. We provide plotDrugStructure(), plotDScoreHeatmap(), plotDSpwHeatmap(), plotGlobalGraph() and plotSpwNetGraph() functions to clearly display the results through drug structure diagram, heat map, box diagram and network diagram, etc.
+
+In addition, for samples with only cancer and normal types, **SubtypeDrug** can also identify cancer-related drugs. And the effect of drugs at different concentrations is also considered.<br/>
+
+## Extracting subpathway and constructing drug subpathway association data
+We used *k*-clique method in social network analysis to extract the subpathways from KEGG database and eliminated smaller subpathways with more than 80% overlap of the gene between subpathways that belong to the same pathway. The subpathway data is stored in a list structure. This process is similar to the `psSubpathway` system we built earlier [@han2019pssubpathway]. <br/>
+
+CMap build 02 raw data is downloaded from the CMap website [@lamb2006connectivity]. After normalizing gene expression profiles, differential expression of genes between treatment groups with drugs (distinguish different concentrations of the same drug) and control groups is calculated. For each drug and different concentrations of the same drug, the genes are ranked in a ordered list according to their differential expression. The drug subpathway association score is calculated by enriching gene tags of subpathway to the gene ordered list base on Kolmogorov-Smirnov (KS) like statistic. An empirical gene-based permutation test procedure is used to estimate the significance of drug subpathway association score. The greater positive or negative drug subpathway association score of a subpathway indicate that the drug activates or inhibits this subpathway more strongly. According to the above process, each drug has a table which has Subpathway ID, drug subpathway association score (DSAS), and significance P-value as columns. The table of all drugs is stored as a list we term drug subpathway association data (DrugSpwData).<br/>
+Due to the large data, we construct an packet `SubtypeDrugData` to store subpathway list data and drug subpathway association data.The package `SubtypeDrugData` has been uploaded to the github repository (https://github.com/hanjunwei-lab/SubtypeDrugData), and can be downloaded and used by the following code:
+
+```
+## Download SubtypeDrugData package from GitHub.
+require(devtools)
+install_github("hanjunwei-lab/SubtypeDrugData",force = TRUE)
+require(SubtypeDrugData)
+## Get subpathway list data.
+## If the gene expression profile contains gene Symbol.
+data(SpwSymbolList)
+## If the gene expression profile contains gene Entrezid.
+data(SpwEntrezidList)
+## Get drug subpathway association data.
+data(DrugSpwData)
+```
+
+## Optimizing cancer subtype specific drugs (OCSSD)
+
+This section introduces the evaluation of normalized drug-disease reverse association score, and the identification of cancer subtype-specific drugs. These functions are mainly implemented by the function `OCSSD()`. This function mainly requires four inputs: the gene expression profile, the Sample phenotype data, a list of subpathways and drug subpathway association data.
+
+### Evaluation of normalized drug-disease reverse association score
+
+First, the function `OCSSD()` infers the subpathway activity profile from the gene expression profile through the `GSVA` [@hanzelmann2013gsva] or `ssGSEA` method [@barbie2009systematic].<br/>
+
+Next, the individualized subpathway aberrance score was estimated using the mean and standard deviation of the normal samples [@ahn2014personalized]. The estimated formula as follows:
+$${\mathop{{Z}}\nolimits_{{ij}}=\frac{{\mathop{{Sub}}\nolimits_{{ij}}-mean{ \left( {S\mathop{{ub}}\nolimits_{{i,normal}}} \right) }}}{{stdev{ \left( {\mathop{{Sub}}\nolimits_{{i,normal}}} \right) }}}}$$
+
+where $Sub_{ij}$ is the activity value of the *i* th subpathway in the *j* th cancer sample and $Sub_{i,normal}$ is the vector of activity value of the *i* th subpahtway in the normal samples. Individualized subpathway aberrance score $Z$ denotes the expression status of the subpathway in each cancer sample relative to normal samples. <br/>
+
+For cancer sample *j*, subpathways are ranked in descending order based on the individualized subpathway aberrance score to form the list $L_j$ and we set $q$ be the total number of subpathways. Function `OCSSD()` provides two methods to estimate the drug-disease inverse association score:
+  
+  1. Non-weighed estimate method. For the set of up-regulated subpathways of the $d$ th drug, we construct a vector $V$ of the position ($1...p$) of each subpathway tags in the ordered list $L_j$ and sort these components in ascending order such that $V(g)$ is the position of tag $g$ ($p$ is the number of up-regulated subpathways of the $d$ th drug and $g=1,2,...p$). The Kolmogorov-Smirnov statistic ($KS$) of the subpathway of drug up-regulation ($KS_d^{up}$) is calculated as follows: 
+
+$${D\mathop{{}}\nolimits_{{1}}=max\mathop{{}}\nolimits_{{g=1}}^{{p}}{ \left[ {\frac{{g}}{{p}}-\frac{{V{ \left( {g} \right) }}}{{q}}} \right] }}$$
+  
+  $${\mathop{{D}}\nolimits_{{2}}=max\mathop{{}}\nolimits_{{g=1}}^{{p}}{ \left[ {\frac{{V{ \left( {g} \right) }}}{{q}}-\frac{{{ \left( {g-1} \right) }}}{{p}}} \right] }}$$
+
+We set $KS_d^{up}$=$D_{1}$, if $D_{1}$>$D_{2}$ or $KS_d^{up}$=$-D_{2}$, if $D_{1}$<$D_{2}$. Like the above process, $KS_d^{down}$ is also calculated and the drug-disease reverse association score of the $d$ th drug in the $j$ th cancer sample is $S_{dj}=KS_d^{up}-KS_d^{down}$.
+
+2. Weighed estimate method. For the ordered list $L_j$, we use the GSEA algorithm to calculate the $KS$ statistic of the drug up- and down-regulated subpathway set (termed $ES^{up}$ and $ES^{down}$) with the individualized activity aberrance score of subpathway as weight. The drug-disease reverse association score is $S_{dj}=ES_d^{up}-ES_d^{down}$.
+
+Finally, the normalized drug-disease reverse association score ($NS$) is defined as $S_{dj}/|max(S_{d})|$ where $S_{dj}>0$, or $S_{dj}/|min(S_{d})|$ where $S_{dj}<0$. Through the above method, we further convert the gene expression profile into a normalized drug-disease reverse association score matrix $M=\{NS_{dj}\}$ (the rows are drugs and the columns are cancer samples).
+
+### Identification of cancer subtype-specific drugs
+
+For a given drug and the *t* th cancer subtype, the sutype-specific drug score ($SDS$) is estimated as follows:
+
+$${SDS\mathop{{}}\nolimits_{{t}}=\frac{{1}}{{\mathop{{ \beta }}\nolimits_{{t}}}}{\mathop{ \sum }\limits_{{j \in t}}{NS\mathop{{}}\nolimits_{{j}}}}}$$
+
+where, $\beta_{t}$ is the number of samples in the *t* th cancer subtype, $NS_j$ is the normalized drug-disease reverse association score of *j* th cancer sample for the *t* th cancer subtype. The greater the negative $SDS$ indicates the drug has stronger the potential therapeutic effect on this cancer subtype.<br/>
+
+For the purpose of identifying significative cancer subtype-specific drugs, we assess the significance of the $SDS$ by using an empirical sample-based permutation test procedure and pool the permuted $SDS$ of all cancer subtype into one null distribution $SDS^*$ and $N$ is the number of elements in $SDS^*$. The two-sided *p* value is estimated as:
+$$
+Pvalue_t=\frac{\#\{SDS^*\mid|SDS^*|\ge|SDS_t|\}}{N}
+$$
+
+For the gene expression data that only have two sample type of cancer and healthy control, the list of subpathways is arranged in descending order according to the difference value of the subpathway activity between cancer and normal groups in the subpathway activity profile. Subsequently, the extent of the drug`s effect on cancer is evaluated by enriching the up- and down-regulated subpathways of drug regulation into the ordered list of subpathway. Through an empirical subpathway-based permutation test, cancer-related drugs are identified.
+
+Taking the simulative breast cancer data as an example, breast cancer-related and subtype-specific drug identification and visualization are as follows:
+```{r}
+require(GSVA)
+require(parallel)
+## Get simulated breast cancer gene expression profile data.
+Geneexp<-get("Geneexp")
+## Obtain sample subtype data and calculate breast cancer subtype-specific drugs.
+Subtype_labels<-system.file("extdata", "Subtype_labels.cls", package = "SubtypeDrug")
+```
+```
+# Identify breast subtype-specific drugs.
+Subtype_drugs<-OCSSD(Geneexp,Subtype_labels,"Control",SpwSymbolList,
+                     input.drug.data=DrugSpwData,parallel.sz=1)
+```
+```{r include=FALSE,echo=F}
+Subtype_drugs<-get("Subtype_drugs")
+```
+```{r}
+## Results display.
+str(Subtype_drugs)
+```
+
+The OCSSD() function can also be used to identify breast cancer-related drugs in only two types of samples: breast cancer and normal.
+```
+Cancer_normal_labels<-system.file("extdata", "Cancer_normal_labels.cls", package = "SubtypeDrug")
+Disease_drugs<-OCSSD(Geneexp,Cancer_normal_labels,"Control",SpwSymbolList,input.drug.data=DrugSpwData,
+                     parallel.sz=1)
+```
+The function OCSSD() can also support user-defined data.
+```{r}
+## User-defined drug regulation data should resemble the structure below.
+UserDS<-get("UserDS")
+str(UserDS[1:5])
+## Need to load gene set data consistent with drug regulation data.
+UserGS<-get("UserGS")
+str(UserGS[1:5])
+Drugs<-OCSSD(Geneexp,Subtype_labels,"Control",UserGS,input.drug.data=UserDS,parallel.sz=1)
+```
+## Visualization
+
+### Plot a heat map of normalized drug-disease reverse association scores for cancer samples
+
+```{r fig.height=6, fig.width=10, message=FALSE, warning=FALSE}
+require(pheatmap)
+## Heat map of normalized disease-drug reverse association scores for all subtype-specific drugs.
+plotDScoreHeatmap(data=Subtype_drugs,show.rownames = TRUE,show.colnames = FALSE)
+```
+
+```{r fig.height=3, fig.width=10, message=FALSE, warning=FALSE}
+## Plot only Basal subtype-specific drugs.
+plotDScoreHeatmap(data=Subtype_drugs,subtype.label="Basal",show.rownames = TRUE,show.colnames = FALSE)
+```
+
+### Plot heat map of drug-regulated subpathway individualized activity aberrance score
+
+```{r fig.height=8, fig.width=10}
+## Plot a heat map of the individualized activity aberrance scores of subpathway regulated by drug pirenperone(1.02e-05M). 
+## Basal-specific drugs pirenperone(1.02e-05M) regulated subpathways that show opposite activity from normal samples.
+plotDSpwHeatmap(data=Subtype_drugs,drug.label="pirenperone(1.02e-05M)",subtype.label="Basal",show.colnames=FALSE)
+```
+
+### Plot a global graph of the drug
+
+```{r fig.height=8, fig.width=9}
+## Plot a global graph of the Basal-specific drug pirenperone(1.02e-05M).
+plotGlobalGraph(data=Subtype_drugs,drug.label="pirenperone(1.02e-05M)")
+```
+
+### Polt a subpathway network graph
+
+```{r fig.height=6, fig.width=6, message=FALSE, warning=FALSE}
+require(igraph)
+# plot network graph of the subpathway 00020_4.
+plotSpwNetGraph(spwid="00020_4")
+```
+
+### Visualize the chemical structure of the drug
+
+```
+require(ChemmineR)
+require(rvest)
+## Plot the chemical structure of drug pirenperone(1.02e-05M).
+plotDrugStructure(drug.label="pirenperone(1.02e-05M)")
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("../inst/pirenperone(1.02e-05M).jpeg")
+```
+
+
+## References
