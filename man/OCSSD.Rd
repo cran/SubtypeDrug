@@ -9,13 +9,13 @@ OCSSD(
   input.cls = "",
   control.label = "",
   subpathway.list,
-  spw.min.sz = 1,
+  spw.min.sz = 10,
   spw.max.sz = Inf,
   spw.score.method = "gsva",
   kcdf = "Gaussian",
   input.drug.data,
   drug.p.val.threshold = 0.05,
-  drug.spw.min.sz = 1,
+  drug.spw.min.sz = 10,
   drug.spw.max.sz = Inf,
   weighted.drug.score = TRUE,
   nperm = 1000,
@@ -33,9 +33,9 @@ OCSSD(
 The gene tags included in the subpathway list data should be consistent with those in the gene expression profile. The package `SubtypeDrugData` provides two choices that include the Entrezid and Symbol tags of the gene.
 Users can also enter their own pathway or gene set list data.}
 
-\item{spw.min.sz}{Removes subpathways that contain fewer genes than `spw.min.sz`.}
+\item{spw.min.sz}{Removes subpathways that contain fewer genes than `spw.min.sz` (default: 10).}
 
-\item{spw.max.sz}{Removes subpathways that contain more genes than `spw.max.sz`.}
+\item{spw.max.sz}{Removes subpathways that contain more genes than `spw.max.sz` (default: Inf).}
 
 \item{spw.score.method}{Method to employ in the estimation of subpathway
 enrichment scores per sample. By default this is set to `gsva` (Hänzelmann
@@ -58,7 +58,7 @@ Subpathway or gene set contained in drug regulation data should exist in input d
 set by parameter `drug.p.val.threshold` (default: 0.05), the drug up-regulation and down-regulatory subpathways were screened.}
 
 \item{drug.spw.min.sz}{A numeric. The drug regulated subpathways intersects with the subpathways in the
-subpathway activity profile. Then drugs with less than `drug.spw.min.sz` (default: 1) up- or down-regulated subpathways are removed.}
+subpathway activity profile. Then drugs with less than `drug.spw.min.sz` (default: 10) up- or down-regulated subpathways are removed.}
 
 \item{drug.spw.max.sz}{A numeric. Similar to parameter `drug.spw.min.sz`, drugs with more
 than `drug.spw.max.sz` (default: Inf) up- or down-regulated subpathways are removed.}
@@ -79,16 +79,16 @@ with a smaller number.
 ##' @details
 First, the function OCSSD uses the `GSVA` or `ssgsea` method to
 convert the disease gene expression profile into subpathway activity profile. Parameters `subpathway.list`, `spw.min.sz` and `spw.max.sz` are used
-to process the subpathway list data. `spw.score.method` and `kcdf`
-are used to control the method of constructing the subpathway activity score
-profile. Individualized subpathway activity aberrance score was estimated using the mean and standard deviation of the Control samples.
+to process the subpathway list data. `spw.score.method` and `kcdf` are used to control the method of constructing the subpathway activity score
+profile.
+  Individualized subpathway activity aberrance score was estimated using the mean and standard deviation of the Control samples.
 Subpathways of each cancer sample are ordered in a ranked list according to individualized subpathway activity aberrance score.
 Next, we calculate the normalized drug-disease reverse association score by enriching drug regulated subpathway tags to the subpathway ranked list.
 Finlly, all drug-regulated subpathways are enriched into each cancer sample to obtain a normalized drug-disease reverse association score matrix.
-The `drug.p.val.threshold`, `drug.spw.min.sz` and `drug.spw.max.sz` is used to screen the drug regulated subpathway data.
-If user-defined drug targeting data is used, drug regulated `Target_upregulation` and `Target_downregulation` should already be defined in the data.
+The `drug.p.val.threshold`, `drug.spw.min.sz` and `drug.spw.max.sz` is used to screen the drug regulated subpathway set.
+  If user-defined drug targeting data is used, drug regulated `Target_upregulation` and `Target_downregulation` should already be defined in the data.
 The `weighted.drug.score` to control the method of calculating the normalized drug-disease reverse association score.
-Finally, empirical sample-based permutation test procedure to obtain significative cancer subtype specific drugs.
+  Finally, empirical sample-based permutation test procedure to obtain significative cancer subtype specific drugs.
 For samples containing only cancer and Control, the subpathways are ranked according to the difference in activity between cancer and Control samples.
 Subsequently, the subpathway set of drug up- and down-regulated is enriched to the ranking list of subpathway to evaluate the normalized drug-disease reverse association score and
 subpathway-based permutation test procedure to calculate significance.
@@ -96,7 +96,7 @@ The subpathway list data and drug subpathway associated data set is stored in pa
 can be obtained on \url{https://github.com/hanjunwei-lab/SubtypeDrugData}.}
 }
 \value{
-A list contains the result table of cancer related or cancer subtype specific drugs, a subpathway activity score matrix, a normalized drug-disease reverse
+A list contains the result table of drug scoring and significance, a subpathway activity score matrix, a normalized drug-disease reverse
 association score matrix, sample information, and user set parameter information.
 }
 \description{
@@ -109,7 +109,7 @@ OCSSD
 require(GSVA)
 require(parallel)
 ## Get simulated breast cancer gene expression profile data.
-Geneexp<-get("GeneexpT")
+Geneexp<-get("Geneexp")
 ## Obtain sample subtype data and calculate breast cancer subtype-specific drugs.
 \donttest{Subtype<-system.file("extdata", "Subtype_labels.cls", package = "SubtypeDrug")}
 
@@ -137,13 +137,15 @@ Cancer<-system.file("extdata", "Cancer_normal_labels.cls", package = "SubtypeDru
 \donttest{Disease_drugs<-OCSSD(Geneexp,Cancer,"Control",SpwSymbolList,input.drug.data=DrugSpwData)}
 
 ## The function OCSSD() can also support user-defined data.
+Geneexp<-get("GeneexpT")
 ## User-defined drug regulation data should resemble the structure below
 UserDS<-get("UserDST")
 str(UserDS)
 ## Need to load gene set data consistent with drug regulation data.
 UserGS<-get("UserGST")
 str(UserGS)
-Drugs<-OCSSD(Geneexp,Cancer,"Control",UserGS,input.drug.data=UserDS,nperm=10)
+Drugs<-OCSSD(Geneexp,Cancer,"Control",UserGS,spw.min.sz=1,
+input.drug.data=UserDS,drug.spw.min.sz=1,nperm=10)
 }
 \author{
 Xudong Han,

@@ -8,8 +8,8 @@
 ##' @param subpathway.list A list.  The subpathway list data is mined from KEGG data is stored in the package `SubtypeDrugData` and can be downloaded through the connection \url{https://github.com/hanjunwei-lab/SubtypeDrugData}.
 ##'  The gene tags included in the subpathway list data should be consistent with those in the gene expression profile. The package `SubtypeDrugData` provides two choices that include the Entrezid and Symbol tags of the gene.
 ##'  Users can also enter their own pathway or gene set list data.
-##' @param spw.min.sz Removes subpathways that contain fewer genes than `spw.min.sz`.
-##' @param spw.max.sz Removes subpathways that contain more genes than `spw.max.sz`.
+##' @param spw.min.sz Removes subpathways that contain fewer genes than `spw.min.sz` (default: 10).
+##' @param spw.max.sz Removes subpathways that contain more genes than `spw.max.sz` (default: Inf).
 ##' @param spw.score.method Method to employ in the estimation of subpathway
 ##' enrichment scores per sample. By default this is set to `gsva` (Hänzelmann
 ##' et al, 2013) and other options are `ssgsea` (Barbie et al, 2009).
@@ -27,7 +27,7 @@
 ##' @param drug.p.val.threshold Parameter used only when `input.drug.data="DrugSpwData"`. According to the threshold of the significant P value
 ##' set by parameter `drug.p.val.threshold` (default: 0.05), the drug up-regulation and down-regulatory subpathways were screened.
 ##' @param drug.spw.min.sz A numeric. The drug regulated subpathways intersects with the subpathways in the
-##' subpathway activity profile. Then drugs with less than `drug.spw.min.sz` (default: 1) up- or down-regulated subpathways are removed.
+##' subpathway activity profile. Then drugs with less than `drug.spw.min.sz` (default: 10) up- or down-regulated subpathways are removed.
 ##' @param drug.spw.max.sz A numeric. Similar to parameter `drug.spw.min.sz`, drugs with more
 ##' than `drug.spw.max.sz` (default: Inf) up- or down-regulated subpathways are removed.
 ##' @param weighted.drug.score A boolean values determines the method for
@@ -44,22 +44,22 @@
 ##' ##' @details
 ##' First, the function OCSSD uses the `GSVA` or `ssgsea` method to
 ##' convert the disease gene expression profile into subpathway activity profile. Parameters `subpathway.list`, `spw.min.sz` and `spw.max.sz` are used
-##' to process the subpathway list data. `spw.score.method` and `kcdf`
-##' are used to control the method of constructing the subpathway activity score
-##' profile. Individualized subpathway activity aberrance score was estimated using the mean and standard deviation of the Control samples.
+##' to process the subpathway list data. `spw.score.method` and `kcdf` are used to control the method of constructing the subpathway activity score
+##' profile.
+##'   Individualized subpathway activity aberrance score was estimated using the mean and standard deviation of the Control samples.
 ##' Subpathways of each cancer sample are ordered in a ranked list according to individualized subpathway activity aberrance score.
 ##' Next, we calculate the normalized drug-disease reverse association score by enriching drug regulated subpathway tags to the subpathway ranked list.
 ##' Finlly, all drug-regulated subpathways are enriched into each cancer sample to obtain a normalized drug-disease reverse association score matrix.
-##' The `drug.p.val.threshold`, `drug.spw.min.sz` and `drug.spw.max.sz` is used to screen the drug regulated subpathway data.
-##' If user-defined drug targeting data is used, drug regulated `Target_upregulation` and `Target_downregulation` should already be defined in the data.
+##' The `drug.p.val.threshold`, `drug.spw.min.sz` and `drug.spw.max.sz` is used to screen the drug regulated subpathway set.
+##'   If user-defined drug targeting data is used, drug regulated `Target_upregulation` and `Target_downregulation` should already be defined in the data.
 ##' The `weighted.drug.score` to control the method of calculating the normalized drug-disease reverse association score.
-##' Finally, empirical sample-based permutation test procedure to obtain significative cancer subtype specific drugs.
+##'   Finally, empirical sample-based permutation test procedure to obtain significative cancer subtype specific drugs.
 ##' For samples containing only cancer and Control, the subpathways are ranked according to the difference in activity between cancer and Control samples.
 ##' Subsequently, the subpathway set of drug up- and down-regulated is enriched to the ranking list of subpathway to evaluate the normalized drug-disease reverse association score and
 ##' subpathway-based permutation test procedure to calculate significance.
 ##' The subpathway list data and drug subpathway associated data set is stored in package `SubtypeDrugData` and
 ##' can be obtained on \url{https://github.com/hanjunwei-lab/SubtypeDrugData}.
-##' @return A list contains the result table of cancer related or cancer subtype specific drugs, a subpathway activity score matrix, a normalized drug-disease reverse
+##' @return A list contains the result table of drug scoring and significance, a subpathway activity score matrix, a normalized drug-disease reverse
 ##' association score matrix, sample information, and user set parameter information.
 ##' @author Xudong Han,
 ##' Junwei Han,
@@ -68,7 +68,7 @@
 ##' require(GSVA)
 ##' require(parallel)
 ##' ## Get simulated breast cancer gene expression profile data.
-##' Geneexp<-get("GeneexpT")
+##' Geneexp<-get("Geneexp")
 ##' ## Obtain sample subtype data and calculate breast cancer subtype-specific drugs.
 ##' \donttest{Subtype<-system.file("extdata", "Subtype_labels.cls", package = "SubtypeDrug")}
 ##'
@@ -96,13 +96,15 @@
 ##' \donttest{Disease_drugs<-OCSSD(Geneexp,Cancer,"Control",SpwSymbolList,input.drug.data=DrugSpwData)}
 ##'
 ##' ## The function OCSSD() can also support user-defined data.
+##' Geneexp<-get("GeneexpT")
 ##' ## User-defined drug regulation data should resemble the structure below
 ##' UserDS<-get("UserDST")
 ##' str(UserDS)
 ##' ## Need to load gene set data consistent with drug regulation data.
 ##' UserGS<-get("UserGST")
 ##' str(UserGS)
-##' Drugs<-OCSSD(Geneexp,Cancer,"Control",UserGS,input.drug.data=UserDS,nperm=10)
+##' Drugs<-OCSSD(Geneexp,Cancer,"Control",UserGS,spw.min.sz=1,
+##' input.drug.data=UserDS,drug.spw.min.sz=1,nperm=10)
 ##' @importFrom parallel parLapply
 ##' @importFrom parallel detectCores
 ##' @importFrom parallel makeCluster
@@ -110,12 +112,13 @@
 ##' @importFrom parallel stopCluster
 ##' @importFrom GSVA gsva
 ##' @importFrom stats p.adjust
+##' @importFrom stats pnorm
 ##' @export
 
 OCSSD<-function(expr,input.cls="",control.label="",subpathway.list,
-                spw.min.sz=1,spw.max.sz=Inf,spw.score.method="gsva",kcdf="Gaussian",
+                spw.min.sz=10,spw.max.sz=Inf,spw.score.method="gsva",kcdf="Gaussian",
                 input.drug.data,drug.p.val.threshold=0.05,
-                drug.spw.min.sz=1,drug.spw.max.sz=Inf,
+                drug.spw.min.sz=10,drug.spw.max.sz=Inf,
                 weighted.drug.score=TRUE,nperm=1000,parallel.sz=1){
 
   haveGSVA <- isPackageLoaded("GSVA")
@@ -214,7 +217,7 @@ OCSSD<-function(expr,input.cls="",control.label="",subpathway.list,
 
       p_values<-sapply(c(1:length(drugs)), function(i){
         s_t<-abs(drugs[i])
-        p.val<-sum(abs(rdmean_matrix[i,])>=s_t)/nperm
+        p.val<-pnorm(-s_t,mean = mean(rdmean_matrix[i,]), sd = sd(rdmean_matrix[i,]),lower.tail = TRUE)+pnorm(s_t,mean = mean(rdmean_matrix[i,]), sd = sd(rdmean_matrix[i,]),lower.tail = F)
         return(p.val)
       })
 
@@ -223,7 +226,7 @@ OCSSD<-function(expr,input.cls="",control.label="",subpathway.list,
       result<-data.frame(Drug=names(drugs),
                           Target_upregulation=up_signature1,
                           Target_downregulation=down_signature1,
-                          SDS=signif(drugs,digits=3),Pvalue=signif(p_values,digits=3),FDR=signif(fdr,digits=3),stringsAsFactors=FALSE)
+                          NS=signif(drugs,digits=3),E_Pvalue=signif(p_values,digits=3),E_FDR=signif(fdr,digits=3),stringsAsFactors=FALSE)
       result<-list(result,spw_matrix_y,SmaplePhenotype,Parameters)
       names(result)<-c(phen,"SubpathwayMatrix","SampleInformation","Parameter")
       return(result)
@@ -268,15 +271,56 @@ OCSSD<-function(expr,input.cls="",control.label="",subpathway.list,
         }
         return(rdmeans)
       },drug_sample_matrix,samples.v,phen)
-      stopCluster(cl)
+      # stopCluster(cl)
       rdmean_matrix<-do.call("cbind",rdmean_matrix)
+
+      sub_fc<-NULL
+      sub_score<-NULL
+      for(p in 1:length(phen)){
+        fc<-apply(spw_matrix_y, 1, function(x){
+          foldc<-mean(x[which(samples.v1==phen[p])])-mean(x[which(samples.v1==control.label)])
+          return(foldc)
+       })
+        sub_score<-cbind(sub_score,getDrugMatrix(fc,drug_target_data,weighted.drug.score))
+        sub_fc<-cbind(sub_fc,fc)
+      }
+
+      clusterExport(cl,c("CalculateSES","getDrugMatrix"))
+      subrd_matrix<-parLapply(cl,1:nperm,function(n,fc1,weighted.drug.score,drug_target_data){
+        row.names(fc1)<-sample(row.names(fc1),size = nrow(fc1),replace = FALSE)
+        rdmatrix<-apply(fc1,2,function(x){
+          return(getDrugMatrix(x,drug_target_data,weighted.drug.score))
+        })
+        return(rdmatrix)
+      },sub_fc,weighted.drug.score,drug_target_data)
+      subrd_matrix<-do.call("cbind",subrd_matrix)
+      stopCluster(cl)
+
+      sub_p<-NULL
+      sub_fdr<-NULL
+      for(p in 1:length(phen)){
+        if(p==length(phen)){
+          sx<-which(c(1:ncol(subrd_matrix))%%length(phen)==0)
+        }else{
+          sx<-which(c(1:ncol(subrd_matrix))%%length(phen)==p)
+        }
+        subrd_matrix1<-subrd_matrix[,sx]
+        sub_p1<-sapply(c(1:nrow(sub_score)), function(i){
+          s_t<-abs(sub_score[i,p])
+          p.val<-pnorm(-s_t,mean = mean(subrd_matrix1[i,]), sd = sd(subrd_matrix1[i,]),lower.tail = TRUE)+pnorm(s_t,mean = mean(subrd_matrix1[i,]), sd = sd(subrd_matrix1[i,]),lower.tail = F)
+          return(p.val)
+        })
+         sub_fdr1<-p.adjust(sub_p1,"BH",length(sub_p1))
+         sub_p<-cbind(sub_p,sub_p1)
+         sub_fdr<-cbind(sub_fdr,sub_fdr1)
+      }
 
       colnames(drug_true_s)<-phen
       p_values<-sapply(c(1:nrow(drug_true_s)),function(d){
         p_val_v<-NULL
         for(i in 1:pn){
           s_t<-abs(drug_true_s[d,i])
-          p.val<-sum(abs(rdmean_matrix[d,])>=s_t)/(nperm*pn)
+          p.val<-pnorm(-s_t,mean = mean(rdmean_matrix[d,]), sd = sd(rdmean_matrix[d,]),lower.tail = TRUE)+pnorm(s_t,mean = mean(rdmean_matrix[d,]), sd = sd(rdmean_matrix[d,]),lower.tail = F)
           p_val_v<-c(p_val_v,p.val)
         }
         return(p_val_v)
@@ -289,7 +333,7 @@ OCSSD<-function(expr,input.cls="",control.label="",subpathway.list,
         result[[i]]<-data.frame(Drug=row.names(drug_sample_matrix),
                          Target_upregulation=up_signature1,
                          Target_downregulation=down_signature1,
-                         SDS=drug_true_s1,Pvalue=signif(p_values[i,],digits=3),FDR=signif(fdr,digits=3),stringsAsFactors=FALSE)
+                         SDS=drug_true_s1,E_Pvalue=sub_p[,i],E_FDR=sub_fdr[,i],S_Pvalue=signif(p_values[i,],digits=3),S_FDR=signif(fdr,digits=3),stringsAsFactors=FALSE)
       }
 
     result<-c(result,list(drug_sample_matrix,spw_matrix_y,SmaplePhenotype,Parameters))

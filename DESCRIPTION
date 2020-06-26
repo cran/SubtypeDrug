@@ -1,7 +1,7 @@
 Package: SubtypeDrug
 Type: Package
 Title: Prioritization of Candidate Cancer Subtype Specific Drugs
-Version: 0.1.0
+Version: 0.1.1
 Author: Xudong Han,
   Junwei Han,
   Chonghui Liu
@@ -21,6 +21,6 @@ Imports:
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-05-12 10:49:33 UTC; 12859
+Packaged: 2020-06-26 02:11:28 UTC; 12859
 Repository: CRAN
-Date/Publication: 2020-05-16 09:30:08 UTC
+Date/Publication: 2020-06-26 04:50:02 UTC
