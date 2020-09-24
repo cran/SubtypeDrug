@@ -25,12 +25,12 @@ getDrugSpw<-function(drug_target_data,spw_matrix_rnames,drug.P.value.threshold,d
   isdf<-is.data.frame(drug_target_data[[1]])
   if(isdf==TRUE){
    Target_upregulation<-lapply(drug_target_data, function(x){
-              screen_index<-which(x$DSAS>0&x$P_value<=drug.P.value.threshold)
+              screen_index<-which(x$ES>0&x$P_value<=drug.P.value.threshold)
               drug_up<-x$SubpathwayId[screen_index]
               return(drug_up)
               })
    Target_downregulation<-lapply(drug_target_data, function(x){
-              screen_index<-which(x$DSAS<0&x$P_value<=drug.P.value.threshold)
+              screen_index<-which(x$ES<0&x$P_value<=drug.P.value.threshold)
               drug_down<-x$SubpathwayId[screen_index]
               return(drug_down)
               })

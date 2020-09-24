@@ -29,7 +29,8 @@ str(UserDS[1:5])
 ## Need to load gene set data consistent with drug regulation data.
 UserGS<-get("UserGS")
 str(UserGS[1:5])
-Drugs<-OCSSD(Geneexp,Subtype_labels,"Control",UserGS,spw.min.sz=1,input.drug.data=UserDS,drug.spw.min.sz=1)
+Drugs<-PrioSubtypeDrug(Geneexp,Subtype_labels,"Control",UserGS,spw.min.sz=1,drug.spw.data=UserDS,drug.spw.min.sz=1,
+                       E_FDR=1,S_FDR=1)
 
 ## ----fig.height=15, fig.width=10, message=FALSE, warning=FALSE----------------
 require(pheatmap)
@@ -40,7 +41,7 @@ plotDScoreHeatmap(data=Subtype_drugs,E_Pvalue.th=0.05,E_FDR.th=1,S_Pvalue.th=0.0
 ## Plot only Basal subtype-specific drugs.
 plotDScoreHeatmap(Subtype_drugs,subtype.label="Basal",SDS="all",E_Pvalue.th=0.05,E_FDR.th=1,S_Pvalue.th=0.05,S_FDR.th=1,show.colnames = FALSE)
 
-## ----fig.height=8, fig.width=10-----------------------------------------------
+## ----fig.height=8, fig.width=12-----------------------------------------------
 ## Plot a heat map of the individualized activity aberrance scores of subpathway regulated by drug pirenperone(1.02e-05M). 
 ## Basal-specific drugs pirenperone(1.02e-05M) regulated subpathways that show opposite activity from normal samples.
 plotDSpwHeatmap(data=Subtype_drugs,drug.label="pirenperone(1.02e-05M)",subtype.label="Basal",show.colnames=FALSE)

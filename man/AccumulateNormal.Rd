@@ -15,7 +15,7 @@ AccumulateNormal(x_matrix, control_index)
 A matrix.
 }
 \description{
-Estimate individual activity aberrance score of subpathway.
+Infering patient-specific subpathway activity profiles.
 }
 \details{
 AccumulateNormal

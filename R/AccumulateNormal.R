@@ -2,7 +2,7 @@
 ##'
 ##'
 ##' @title SubtypeDrug internal function
-##' @description Estimate individual activity aberrance score of subpathway.
+##' @description Infering patient-specific subpathway activity profiles.
 ##' @param x_matrix A subpathway activity profile. rows are subpathwyas, columns are samples.
 ##' @param control_index A vector. In the sample of the subpathway activity profile, the position of control samples.
 ##' @return A matrix.

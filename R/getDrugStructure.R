@@ -1,31 +1,29 @@
-##' plotDrugStructure
+##' getDrugStructure
 ##'
 ##'
-##' @title Visualize the chemical structure of the drug
-##' @description `plotDrugStructure()` outputs the chemical structure graph of the
-##' drug or compound based on the input drug label by the user.
+##' @title Get drug chemical structure diagram data
+##' @description `getDrugStructure()` outputs the chemical structure graph data of the
+##' drug or compound based on the input drug label by the user. The results can be visualized by the `plot` function.
 ##' @param drug.label A character string of drug label to determine which drug to use for visualization.
 ##' @param main An overall title for the chemical structure graph.
 ##' @param sub A sub title for the chemical structure graph.
-##' @param cex.main The magnification to be used for main titles (default: 1.5).
-##' @param cex.sub The magnification to be used for sub titles relative to the
-##' current setting of cex.
-##' @return A plot.
+##' @return A sdfset object.
 ##' @author Xudong Han,
 ##' Junwei Han,
 ##' Chonghui Liu
 ##' @examples
 ##' \donttest{require(rvest)}
 ##' \donttest{require(ChemmineR)}
-##' # Plot the chemical structure of drug beclometasone.
-##' \donttest{plotDrugStructure(drug.label="pirenperone(1.02e-05M)")}
+##' # Plot the chemical structure of drug pirenperone.
+##' \donttest{Chem_str<-getDrugStructure(drug.label="pirenperone.")}
+##' \donttest{plot(Chem_str)}
 ##' @importFrom ChemmineR read.SDFset
 ##' @importFrom rvest html_text
 ##' @importFrom xml2 read_html
 ##' @importFrom graphics plot
 ##' @export
 
-plotDrugStructure<-function(drug.label="",main="",sub="",cex.main=1.5,cex.sub=1){
+getDrugStructure<-function(drug.label="",main="",sub=""){
   haveChemmineR <- isPackageLoaded("ChemmineR")
   havervest <- isPackageLoaded("rvest")
   if(haveChemmineR==FALSE){
@@ -43,8 +41,8 @@ plotDrugStructure<-function(drug.label="",main="",sub="",cex.main=1.5,cex.sub=1)
   if ('try-error' %in% class(cw)){
     stop("Please ensure smooth network connection")
   }
-  drugnr<-read_html(drug_url)
-  drugnr<-html_text(drugnr)
+  #drugnr<-read_html(drug_url)
+  drugnr<-html_text(cw)
   drugnr<-strsplit(drugnr,"\n")
   drugnr<-unlist(drugnr)
   sdfset <- read.SDFset(drugnr)
@@ -53,10 +51,5 @@ plotDrugStructure<-function(drug.label="",main="",sub="",cex.main=1.5,cex.sub=1)
   }else{
     sdfset@ID <- main
   }
-  if(sub==""){
-     plot(sdfset,print=FALSE,cex.main=cex.main,cex.sub=cex.sub)
-  }else{
-    plot(sdfset,print=FALSE,sub=sub,cex.main=cex.main,cex.sub=cex.sub)
-  }
-
+  return(sdfset)
 }
