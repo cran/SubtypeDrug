@@ -15,6 +15,12 @@
 ##' @param S_FDR.th A numeric.A threshold is used to filter the Subtype specific P value (default: 0.001).
 ##' @param show.rownames Boolean specifying if row names are be shown (default: TRUE).
 ##' @param show.colnames Boolean specifying if column names are be shown (default: FALSE).
+##' @param color Vector of colors used in heatmap.
+##' @param subtype_colors Vector of colors is used to annotate the sample subtype.Its length should correspond to the number of sample subtypes.
+##' @param drug_colors Vector of colors is used to label subtype-specific drugs.
+##' @param border_color Color of cell borders on heatmap, use NA if no border should be drawn.
+##' @param cellwidth Individual cell width in points. If left as NA, then the values depend on the size of plotting window.
+##' @param cellheight Individual cell height in points. If left as NA, then the values depend on the size of plotting window.
 ##' @param fontsize Base fontsize for the plot (default: 10).
 ##' @param fontsize.row Fontsize for rownames (default: 10).
 ##' @param fontsize.col Fontsize for colnames (default: 10).
@@ -38,7 +44,8 @@
 ##' @importFrom grDevices colorRampPalette
 ##' @export
 plotDScoreHeatmap<-function(data,subtype.label="all",SDS="all",E_Pvalue.th=1,E_FDR.th=0.05,S_Pvalue.th=1,S_FDR.th=0.001,show.rownames = TRUE,
-                          show.colnames = FALSE,fontsize = 10, fontsize.row = 10, fontsize.col = 10,scale = "row"){
+                          show.colnames = FALSE,color=colorRampPalette(c("#0A8D0A", "#F8F0EB", "red"))(190),subtype_colors=NA,
+                          drug_colors=NA,border_color = "grey60",cellwidth = NA, cellheight = NA,fontsize = 10, fontsize.row = 10, fontsize.col = 10,scale = "row"){
   havepheatmap <- isPackageLoaded("pheatmap")
   if(havepheatmap==FALSE){
     stop("The 'pheatmap' library, should be loaded first")
@@ -48,11 +55,22 @@ plotDScoreHeatmap<-function(data,subtype.label="all",SDS="all",E_Pvalue.th=1,E_F
   phen<-phen[phen!=data[["Parameter"]][["control.label"]]]
    if(length(phen)==1){
     stop("There is no drug disease inverse association score matrix in the results of the two sample types")
-  }
+   }
+
   colork<-get("Colork")
-  sycolor<-colork[1:length(phen)]
+  if(is.na(subtype_colors)==TRUE){
+    sycolor<-colork[1:length(phen)]
+  }else{
+    sycolor<-subtype_colors
+  }
   names(sycolor)<-phen
-  sycolor1<-colork[(length(phen)+2):(2*length(phen)+1)]
+
+  if(is.na(drug_colors)==TRUE){
+    sycolor1<-colork[(length(phen)+2):(2*length(phen)+1)]
+  }else{
+    sycolor1<-drug_colors
+  }
+
   zdz<-max(data[["DrugMatrix"]])
   zxz<-min(data[["DrugMatrix"]])
   bk <- c(seq(zxz,-0.1,by=0.01),seq(0,zdz,by=0.01))
@@ -128,7 +146,7 @@ plotDScoreHeatmap<-function(data,subtype.label="all",SDS="all",E_Pvalue.th=1,E_F
       }
       ann_colors<-list(SDS=c(Negative_treatment="blue",Positive_side_effect="red"),Subtype=sycolor,Drugs=sycolor1)
       pheatmap(drugrtmatrix,cluster_rows=FALSE,cluster_cols=FALSE,annotation_row =rowann,annotation_col =colann,
-             color = colorRampPalette(c("#0A8D0A", "#F8F0EB", "red"))(190),breaks=bk,
+             color =color,breaks=bk,border_color=border_color,cellwidth=cellwidth,cellheight = cellheight,
              show_rownames=show.rownames, show_colnames=show.colnames,fontsize=fontsize, fontsize_row =fontsize.row,
              fontsize_col =fontsize.col,annotation_colors = ann_colors,main="Heat map of all subtypec specific drugs",
              gaps_col=cumsum(phen_length),gaps_row = cumsum(drug_fg),scale=scale)
@@ -190,7 +208,7 @@ plotDScoreHeatmap<-function(data,subtype.label="all",SDS="all",E_Pvalue.th=1,E_F
       names(sycolor2)<-paste(subtype.label,"_specific",sep = "")
       ann_colors<-list(SDS=c(Negative_treatment="blue",Positive_side_effect="red"),Subtype=sycolor,Drugs=sycolor2)
       pheatmap(drugrtmatrix,cluster_rows=FALSE,cluster_cols=FALSE,annotation_row =rowann,annotation_col =colann,
-               color = colorRampPalette(c("#0A8D0A", "#F8F0EB", "red"))(190),breaks=bk,
+               color = color,breaks=bk,border_color=border_color,cellwidth=cellwidth,cellheight = cellheight,
                show_rownames=show.rownames, show_colnames=show.colnames,fontsize=fontsize, fontsize_row=fontsize.row,
                fontsize_col=fontsize.col,annotation_colors = ann_colors,main=paste("Heat map of the",subtype.label,"specific drugs"),
                gaps_col=cumsum(phen_length),scale=scale)

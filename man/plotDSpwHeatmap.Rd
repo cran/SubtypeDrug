@@ -10,6 +10,11 @@ plotDSpwHeatmap(
   subtype.label = "",
   show.rownames = TRUE,
   show.colnames = TRUE,
+  color = NA,
+  phen_colors = NA,
+  border_color = "grey60",
+  cellwidth = NA,
+  cellheight = NA,
   fontsize = 10,
   fontsize.row = 10,
   fontsize.col = 10,
@@ -26,6 +31,16 @@ plotDSpwHeatmap(
 \item{show.rownames}{Boolean specifying if row names are be shown.}
 
 \item{show.colnames}{Boolean specifying if column names are be shown.}
+
+\item{color}{Vector of colors used in heatmap.}
+
+\item{phen_colors}{Vector of colors is used to annotate the sample subtype and control sample.It should be assigned two colors.}
+
+\item{border_color}{Color of cell borders on heatmap, use NA if no border should be drawn.}
+
+\item{cellwidth}{Individual cell width in points. If left as NA, then the values depend on the size of plotting window.}
+
+\item{cellheight}{Individual cell height in points. If left as NA, then the values depend on the size of plotting window.}
 
 \item{fontsize}{Base fontsize for the plot (default: 10).}
 

@@ -8,6 +8,11 @@
 ##' @param subtype.label Character string indicates which sample of the cancer subtype was used to plot the heat map.
 ##' @param show.rownames Boolean specifying if row names are be shown.
 ##' @param show.colnames Boolean specifying if column names are be shown.
+##' @param color Vector of colors used in heatmap.
+##' @param phen_colors Vector of colors is used to annotate the sample subtype and control sample.It should be assigned two colors.
+##' @param border_color Color of cell borders on heatmap, use NA if no border should be drawn.
+##' @param cellwidth Individual cell width in points. If left as NA, then the values depend on the size of plotting window.
+##' @param cellheight Individual cell height in points. If left as NA, then the values depend on the size of plotting window.
 ##' @param fontsize Base fontsize for the plot (default: 10).
 ##' @param fontsize.row Fontsize for rownames (default: 10).
 ##' @param fontsize.col Fontsize for colnames (default: 10).
@@ -36,7 +41,7 @@
 ##' @importFrom stats na.omit
 ##' @export
 plotDSpwHeatmap<-function(data,drug.label="",subtype.label="",show.rownames = TRUE,show.colnames = TRUE,
-                         fontsize = 10,fontsize.row = 10,fontsize.col = 10,scale = "row"){
+                          color=NA,phen_colors=NA,border_color = "grey60",cellwidth = NA, cellheight = NA,fontsize = 10,fontsize.row = 10,fontsize.col = 10,scale = "row"){
    havepheatmap <- isPackageLoaded("pheatmap")
   if(havepheatmap==FALSE){
     stop("The 'pheatmap' library, should be loaded first")
@@ -47,7 +52,13 @@ plotDSpwHeatmap<-function(data,drug.label="",subtype.label="",show.rownames = TR
   control.label<-data[["Parameter"]][["control.label"]]
   colork<-get("Colork")
   pp<-which(phen==subtype.label)
-  sycolor<-c(colork[pp],"#3CB371")
+
+  if(is.na(phen_colors)==TRUE){
+    sycolor<-c(colork[pp],"#3CB371")
+  }else{
+    sycolor<-phen_colors
+  }
+
   names(sycolor)<-c(subtype.label,control.label)
 
 
@@ -103,8 +114,18 @@ plotDSpwHeatmap<-function(data,drug.label="",subtype.label="",show.rownames = TR
     }
 
   ann_colors<-list(Subpathway=c(upregulated_subpathway="red",downregulated_subpathway="blue"),Subtype=sycolor)
-  pheatmap(rt_matrix,cluster_rows=FALSE,cluster_cols=FALSE,annotation_row =rowann,annotation_col =colann,
-           show_rownames=show.rownames, show_colnames=show.colnames,fontsize=fontsize, fontsize_row=fontsize.row,
-           fontsize_col=fontsize.col,annotation_colors = ann_colors,main=paste("Heatmap of the activities of significant subpathways targeted by the",drug.label),
-           gaps_col=cumsum(phen_length),gaps_row = upspwlength,scale=scale)
+
+  if(is.na(color)==TRUE){
+    pheatmap(rt_matrix,cluster_rows=FALSE,cluster_cols=FALSE,annotation_row =rowann,annotation_col =colann,
+             border_color=border_color,cellwidth=cellwidth,cellheight = cellheight,
+            show_rownames=show.rownames, show_colnames=show.colnames,fontsize=fontsize, fontsize_row=fontsize.row,
+            fontsize_col=fontsize.col,annotation_colors = ann_colors,main=paste("Heatmap of the activities of significant subpathways targeted by the",drug.label),
+            gaps_col=cumsum(phen_length),gaps_row = upspwlength,scale=scale)
+  }else{
+    pheatmap(rt_matrix,cluster_rows=FALSE,cluster_cols=FALSE,annotation_row =rowann,annotation_col =colann,color=color,
+             border_color=border_color,cellwidth=cellwidth,cellheight = cellheight,
+            show_rownames=show.rownames, show_colnames=show.colnames,fontsize=fontsize, fontsize_row=fontsize.row,
+            fontsize_col=fontsize.col,annotation_colors = ann_colors,main=paste("Heatmap of the activities of significant subpathways targeted by the",drug.label),
+            gaps_col=cumsum(phen_length),gaps_row = upspwlength,scale=scale)
+  }
 }

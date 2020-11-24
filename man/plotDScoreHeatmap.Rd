@@ -14,6 +14,12 @@ plotDScoreHeatmap(
   S_FDR.th = 0.001,
   show.rownames = TRUE,
   show.colnames = FALSE,
+  color = colorRampPalette(c("#0A8D0A", "#F8F0EB", "red"))(190),
+  subtype_colors = NA,
+  drug_colors = NA,
+  border_color = "grey60",
+  cellwidth = NA,
+  cellheight = NA,
   fontsize = 10,
   fontsize.row = 10,
   fontsize.col = 10,
@@ -40,6 +46,18 @@ SDS="negative", only drugs with SDS<0 are used. SDS="positive", only drugs with 
 \item{show.rownames}{Boolean specifying if row names are be shown (default: TRUE).}
 
 \item{show.colnames}{Boolean specifying if column names are be shown (default: FALSE).}
+
+\item{color}{Vector of colors used in heatmap.}
+
+\item{subtype_colors}{Vector of colors is used to annotate the sample subtype.Its length should correspond to the number of sample subtypes.}
+
+\item{drug_colors}{Vector of colors is used to label subtype-specific drugs.}
+
+\item{border_color}{Color of cell borders on heatmap, use NA if no border should be drawn.}
+
+\item{cellwidth}{Individual cell width in points. If left as NA, then the values depend on the size of plotting window.}
+
+\item{cellheight}{Individual cell height in points. If left as NA, then the values depend on the size of plotting window.}
 
 \item{fontsize}{Base fontsize for the plot (default: 10).}
 
