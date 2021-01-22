@@ -16,7 +16,7 @@
 ##' @param show.rownames Boolean specifying if row names are be shown (default: TRUE).
 ##' @param show.colnames Boolean specifying if column names are be shown (default: FALSE).
 ##' @param color Vector of colors used in heatmap.
-##' @param subtype_colors Vector of colors is used to annotate the sample subtype.Its length should correspond to the number of sample subtypes.
+##' @param subtype_colors Vector of colors is used to annotate the sample subtype. Its length should correspond to the number of sample subtypes.
 ##' @param drug_colors Vector of colors is used to label subtype-specific drugs.
 ##' @param border_color Color of cell borders on heatmap, use NA if no border should be drawn.
 ##' @param cellwidth Individual cell width in points. If left as NA, then the values depend on the size of plotting window.
@@ -148,7 +148,7 @@ plotDScoreHeatmap<-function(data,subtype.label="all",SDS="all",E_Pvalue.th=1,E_F
       pheatmap(drugrtmatrix,cluster_rows=FALSE,cluster_cols=FALSE,annotation_row =rowann,annotation_col =colann,
              color =color,breaks=bk,border_color=border_color,cellwidth=cellwidth,cellheight = cellheight,
              show_rownames=show.rownames, show_colnames=show.colnames,fontsize=fontsize, fontsize_row =fontsize.row,
-             fontsize_col =fontsize.col,annotation_colors = ann_colors,main="Heat map of all subtypec specific drugs",
+             fontsize_col =fontsize.col,annotation_colors = ann_colors,main="Heat map of all subtype specific drugs",
              gaps_col=cumsum(phen_length),gaps_row = cumsum(drug_fg),scale=scale)
 
     }else{

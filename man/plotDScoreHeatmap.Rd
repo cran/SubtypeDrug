@@ -49,7 +49,7 @@ SDS="negative", only drugs with SDS<0 are used. SDS="positive", only drugs with 
 
 \item{color}{Vector of colors used in heatmap.}
 
-\item{subtype_colors}{Vector of colors is used to annotate the sample subtype.Its length should correspond to the number of sample subtypes.}
+\item{subtype_colors}{Vector of colors is used to annotate the sample subtype. Its length should correspond to the number of sample subtypes.}
 
 \item{drug_colors}{Vector of colors is used to label subtype-specific drugs.}
 

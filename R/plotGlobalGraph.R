@@ -69,7 +69,7 @@ plotGlobalGraph<-function(data,drug.label="",overall.main="",overall.cex.main=1.
     s_NMDCS<-paste("SDS:",s_NMDCS)
     s_p<-paste("S_Pvalue:",s_p)
     group<-data.frame(drug=data[["DrugMatrix"]][drug_index,],samp=sample_v)
-    boxplot(drug~samp,group,col=sycolor,xlab = "Sample subtype",ylab = "NS",main="Box-plot",sub=s_NMDCS,
+    boxplot(drug~samp,group,col=sycolor,xlab = "Sample subtype",ylab = "RS",main="Box-plot",sub=s_NMDCS,
             cex.axis=cex.submap.axis,cex.lab=cex.submap.lab,cex.main=cex.submap.main,cex.sub=cex.submap.sub)
 
     #

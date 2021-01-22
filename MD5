@@ -1,4 +1,4 @@
-0c290773fa75b431a16541e5275a94e8 *DESCRIPTION
+dcf63577f6071133a909f4b6a0b4a270 *DESCRIPTION
 2ceb0bc1e11ea25988e443c8991c4e1d *NAMESPACE
 67adeca59dab55d86c38c364cdcc753c *R/AccumulateNormal.R
 883677f472cb0e162bd4dda404541c8e *R/CalculateSES.R
@@ -19,11 +19,11 @@ e9abfcdfb83603be129faeaaafb40b50 *R/getDrugMatrix.R
 e50c1c4b7c69d6d860cc9e16017995e6 *R/getDrugSpw.R
 29420d7ff87e8bcfef23a979d30e5c0c *R/getDrugStructure.R
 1ff8b964253c5beb20a499dcfc62b92b *R/isPackageLoaded.R
-ad8c8ee25633cd43d450b49af92ce257 *R/plotDScoreHeatmap.R
+8e6064968586a376faf51aec8f0cc10b *R/plotDScoreHeatmap.R
 348a4eb2f24a918428ad39e256d89a2f *R/plotDSpwHeatmap.R
-41958bc5de5f9be83c263e06930ab850 *R/plotGlobalGraph.R
+09a513dadbdebaddd2f1e219f2374165 *R/plotGlobalGraph.R
 06e10519e39ecb5931fd1787bb93f2a4 *R/plotSpwNetGraph.R
-2290dd34cdcc24b52e5d0d555bb8cedb *build/vignette.rds
+dede46cd40efee11e1d7480d743e709b *build/vignette.rds
 f14fe4a785ed240c40b4c506cbb2fa2d *data/Colork.rda
 70861d71c7d55f63c1418420aa18dc62 *data/Disease_drugs.rda
 6ee979b2ca90130c9ca3fa6a6923688c *data/Drugs_CID.rda
@@ -38,7 +38,7 @@ c13c0969c412fc700eafd3bf2a43bd70 *data/UserGST.rda
 603a6cde1f9e6548b86e59109f454f58 *data/datalist
 d5abf4a114ea3f9cda637a3cf1dca2fb *inst/doc/vignette.R
 392c8fd0b5d72c256bba5f0ca5d90a93 *inst/doc/vignette.Rmd
-7d852a1c04cae0825583f9226a4b7cb9 *inst/doc/vignette.html
+0b72ca4e0c79957112140a744645891d *inst/doc/vignette.html
 65553bc6b854f4f53971a78e5848b9ef *inst/extdata/Cancer_normal_labels.cls
 133226fbefbd42c80ecd8ef9d2a61e60 *inst/extdata/Subtype_labels.cls
 a43e2a9c600acfee2a96721c5c8ae843 *inst/pirenperone(1.02e-05M).jpeg
@@ -61,7 +61,7 @@ cf1373d6cec74f98f7180eb255ce8341 *man/UserGST.Rd
 3dfc0f657f6373e9a3be78688bc28d31 *man/getDrugSpw.Rd
 b4822e052e315d88a68db958cc5b5ea0 *man/getDrugStructure.Rd
 8b3082ee41d6ac2e8b18596976b20b04 *man/isPackageLoaded.Rd
-cbc9c01d63c1caf097627851a1edac02 *man/plotDScoreHeatmap.Rd
+27f4489c7e38011f01be6a5f665f0608 *man/plotDScoreHeatmap.Rd
 e996eb200b1198210d28d1b7c6f8321f *man/plotDSpwHeatmap.Rd
 6fb73c9c4789a2e9d31d3d24150d3398 *man/plotGlobalGraph.Rd
 450e50f2ba65f6fba421ae594066fe6a *man/plotSpwNetGraph.Rd
