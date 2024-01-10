@@ -116,6 +116,8 @@
 ##' @importFrom parallel clusterExport
 ##' @importFrom parallel stopCluster
 ##' @importFrom GSVA gsva
+##' @importFrom GSVA ssgseaParam
+##' @importFrom GSVA gsvaParam
 ##' @importFrom stats p.adjust
 ##' @importFrom stats pnorm
 ##' @export
@@ -134,10 +136,13 @@ PrioSubtypeDrug<-function(expr,input.cls="",control.label="",subpathway.list,
   if(haveParallel==FALSE){
     stop("The 'parallel' library, should be loaded first")
   }
+  if(spw.score.method=="ssgsea"){
+    gsvaPar <- ssgseaParam(expr, subpathway.list)
+  }else{
+    gsvaPar <- gsvaParam(expr, subpathway.list,kcdf=kcdf,minSize=spw.min.sz,maxSize=spw.max.sz)
+  }
 
-  spw_matrix_y<-gsva(expr,subpathway.list,method=spw.score.method,kcdf=kcdf,
-                     min.sz=spw.min.sz,max.sz=spw.max.sz,
-                     parallel.sz=parallel.sz,verbose=FALSE)
+  spw_matrix_y<-gsva(gsvaPar)
   spw_matrix_rnames<-row.names(spw_matrix_y)
   sampleid<-colnames(spw_matrix_y)
 

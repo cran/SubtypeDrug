@@ -12,7 +12,8 @@
 ##' Geneexp<-get("GeneexpT")
 ##' UserDS<-get("UserDST")
 ##' UserGS<-get("UserGST")
-##' spw_matrix<-gsva(Geneexp,UserGS,verbose=FALSE)
+##' gsvapar <- gsvaParam(Geneexp, UserGS)
+##' spw_matrix<-gsva(gsvapar)
 ##' x<-getDrugMatrix(spw_matrix,UserDS,weighted.score=FALSE)
 ##' @author Xudong Han,
 ##' Junwei Han,
