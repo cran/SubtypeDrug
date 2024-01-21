@@ -1,5 +1,5 @@
-775d5e6c080b8c0094074d39aeb98a6a *DESCRIPTION
-23a831e7f99cb083353d4da9e241f7e1 *NAMESPACE
+9f8b4c4f1b59926f9ed2edb8fdc7fe69 *DESCRIPTION
+2ceb0bc1e11ea25988e443c8991c4e1d *NAMESPACE
 1fe0ddca2800e6745facd84ca5047229 *R/AccumulateNormal.R
 9809bb5234b4e96fbb0b70e053ecb4e5 *R/CalculateSES.R
 2fd5b229957040b1f3e7b74819f6856c *R/Colork.R
@@ -7,7 +7,7 @@
 f6a2f143381b4d51a0d1bd053f854f44 *R/Drugs_CID.R
 473748d3abe1e1fca2e8b1f814963c01 *R/Geneexp.R
 897bf0548197de2e35eb9744a52d1722 *R/GeneexpT.R
-9b6bdd115d20a86e6e499372e8f05d75 *R/PrioSubtypeDrug.R
+c01ed125d89ee7e458fa29794a1c74c0 *R/PrioSubtypeDrug.R
 af1352519d7bb6de66d8d55d1b390825 *R/ReadClsFile.R
 29989347565fb26c7d34c83166361ac7 *R/SpwNetworkData.R
 6b783f531ab6037a361509d9271cab8d *R/Subtype_drugs.R
@@ -38,7 +38,7 @@ c13c0969c412fc700eafd3bf2a43bd70 *data/UserGST.rda
 603a6cde1f9e6548b86e59109f454f58 *data/datalist
 e80fb5d240d580a3bd5317e9111c77e4 *inst/doc/vignette.R
 392c8fd0b5d72c256bba5f0ca5d90a93 *inst/doc/vignette.Rmd
-ede85bd5353cf4a3cbcb412461126d7a *inst/doc/vignette.html
+ebdb0cf6b4c28fe965e15ca3314ba748 *inst/doc/vignette.html
 65553bc6b854f4f53971a78e5848b9ef *inst/extdata/Cancer_normal_labels.cls
 133226fbefbd42c80ecd8ef9d2a61e60 *inst/extdata/Subtype_labels.cls
 a43e2a9c600acfee2a96721c5c8ae843 *inst/pirenperone(1.02e-05M).jpeg
