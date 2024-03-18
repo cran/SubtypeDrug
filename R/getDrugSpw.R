@@ -15,7 +15,8 @@
 ##' Geneexp<-get("Geneexp")
 ##' UserGS<-get("UserGS")
 ##' UserDS<-get("UserDS")
-##' spw_matrix<-gsva(Geneexp,UserGS,verbose=FALSE)
+##' gsvaPar <- GSVA::ssgseaParam(Geneexp,UserGS,minSize=2)
+##' spw_matrix<-gsva(gsvaPar)
 ##' x<-getDrugSpw(UserDS,row.names(spw_matrix),0.05,1,100)
 ##' @author Xudong Han,
 ##' Junwei Han,

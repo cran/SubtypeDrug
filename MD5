@@ -1,4 +1,4 @@
-9f8b4c4f1b59926f9ed2edb8fdc7fe69 *DESCRIPTION
+a6fe5654c829c7dc24a03b5e9ba289e3 *DESCRIPTION
 2ceb0bc1e11ea25988e443c8991c4e1d *NAMESPACE
 1fe0ddca2800e6745facd84ca5047229 *R/AccumulateNormal.R
 9809bb5234b4e96fbb0b70e053ecb4e5 *R/CalculateSES.R
@@ -16,7 +16,7 @@ f5dc0ca54776f5036ce5385b1e6e1e91 *R/UserDST.R
 3cffa6f45e18b27c7b73a0e059840e10 *R/UserGS.R
 940dee5fa6e9cea84a56ad3c32cd38c1 *R/UserGST.R
 7eccd56569e95857aad6a0d887c98bff *R/getDrugMatrix.R
-4e0cb65a5d6b1117717b14b3d7b42d6d *R/getDrugSpw.R
+fa9371d91bd32a0ed19b9507f94f6c74 *R/getDrugSpw.R
 2c05930a3d913b28eb9e83d2b77340b8 *R/getDrugStructure.R
 e3eb7a39d7722db484839caa3cefcba3 *R/isPackageLoaded.R
 cfeaf203fc59303825573c9c590f91f3 *R/plotDScoreHeatmap.R
@@ -38,7 +38,7 @@ c13c0969c412fc700eafd3bf2a43bd70 *data/UserGST.rda
 603a6cde1f9e6548b86e59109f454f58 *data/datalist
 e80fb5d240d580a3bd5317e9111c77e4 *inst/doc/vignette.R
 392c8fd0b5d72c256bba5f0ca5d90a93 *inst/doc/vignette.Rmd
-ebdb0cf6b4c28fe965e15ca3314ba748 *inst/doc/vignette.html
+801c1fc00817dd37e0393f3a9f42c704 *inst/doc/vignette.html
 65553bc6b854f4f53971a78e5848b9ef *inst/extdata/Cancer_normal_labels.cls
 133226fbefbd42c80ecd8ef9d2a61e60 *inst/extdata/Subtype_labels.cls
 a43e2a9c600acfee2a96721c5c8ae843 *inst/pirenperone(1.02e-05M).jpeg
@@ -58,7 +58,7 @@ f214fe8e041865b0ba4c96c00fd5af2e *man/UserDST.Rd
 d79f6ebc30a1eab5e2234916253fb56a *man/UserGS.Rd
 cf1373d6cec74f98f7180eb255ce8341 *man/UserGST.Rd
 a7d7245c2311be2ee341ccc4e552453f *man/getDrugMatrix.Rd
-f59a08a4f7e362857bfe34ac451368c0 *man/getDrugSpw.Rd
+fd472d9b1064393ab3f875a141cf4df4 *man/getDrugSpw.Rd
 7be1631cafd6fd78c1cd52e3a365455f *man/getDrugStructure.Rd
 61b3bace158d2e824786f41c8a235924 *man/isPackageLoaded.Rd
 0d583e781e020f2e3642673cb92c969f *man/plotDScoreHeatmap.Rd
